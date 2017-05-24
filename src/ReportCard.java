@@ -3,7 +3,7 @@ import java.util.ArrayList;
 class ReportCard {
 
     /* Class level relevant constants */
-    static final String SCHOOL_NAME = "TRUE KNOWLEDGE QUEST";
+    static final String SCHOOL_NAME = "TRUE KNOWLEDGE QUEST MIDDLE SCHOOL";
     static final String ACADEMIC_YEAR = "2016 - 2017";
     static final String ACADEMIC_SCALE = "A = 90 - 100 \nB = 80 - 89 \nC = 70 - 79 \nD = 65 - 69 \nF = Below 65";
     /* Store the student's name */
@@ -48,12 +48,10 @@ class ReportCard {
                 this.scores = studentCourseScores;
             }
         }
-
     }
 
     public static void main(String[] args) {
-        System.out.println("\t\t\t\t\t" + ReportCard.SCHOOL_NAME);
-        System.out.println("\t\t\t\t\t\t" + ReportCard.ACADEMIC_YEAR);
+
         ArrayList<String> studentCourses = new ArrayList<>();
         studentCourses.add("Science");
         studentCourses.add("Mathematics");
@@ -62,10 +60,10 @@ class ReportCard {
         ArrayList<ArrayList<Float>> studentCourseScores = new ArrayList<ArrayList<Float>>();
 
         ArrayList<Float> science = new ArrayList<Float>();
-        science.add(95.5f);
+        science.add(95.75f);
         science.add(100f);
-        science.add(98.5f);
-        science.add(99f);
+        science.add(98.85f);
+        science.add(99.5f);
         studentCourseScores.add(science);
 
         ArrayList<Float> math = new ArrayList<Float>();
@@ -83,14 +81,12 @@ class ReportCard {
         studentCourseScores.add(cs);
 
         ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores);
-        System.out.println("Student Name: " + test.getName());
         System.out.println();
         System.out.println();
 
         test.display();
         System.out.println();
 
-        System.out.println(ReportCard.ACADEMIC_SCALE);
 
     }
 
@@ -141,6 +137,12 @@ class ReportCard {
         return result;
     }
 
+    /**
+     * Get the average score for the individual course scores rounded to the nearest integer
+     *
+     * @param courseScores the float number array containing the individual course scores of all quarters for the academic year
+     * @return an integer average value
+     */
     int courseAverage(float[] courseScores) {
         float sum = 0f;
         for (float f : courseScores) {
@@ -149,7 +151,61 @@ class ReportCard {
         return Math.round(sum / courseScores.length);
     }
 
+    String letterGrade(String courseTitle) {
+        float[] courseScore = mappedScores(courseTitle);
+        int courseAverage = courseAverage(courseScore);
+        if (courseAverage > 89) {
+            return "A";
+        } else if (courseAverage > 79) {
+            return "B";
+        } else if (courseAverage > 69) {
+            return "C";
+        } else if (courseAverage > 64) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+
+    float gradePointAverage() {
+        int sum = 0;
+        for (String s : courses) {
+            if (letterGrade(s).equals("A")) {
+                sum += 4;
+            } else if (letterGrade(s).equals("B")) {
+                sum += 3;
+            } else if (letterGrade(s).equals("C")) {
+                sum += 2;
+            } else if (letterGrade(s).equals("D")) {
+                sum += 1;
+            } else {
+                // No points for letter grade E
+            }
+        }
+        return sum / (float) courses.size();
+    }
+
+    /**
+     * Displays the Report Card for a student
+     */
     void display() {
+        System.out.printf("%55s", ReportCard.SCHOOL_NAME);
+        System.out.println();
+        System.out.printf("%42s", ReportCard.ACADEMIC_YEAR);
+        System.out.println();
+        System.out.println("Student: " + this.getName());
+        System.out.print("  Grade: " + this.getGrade());
+        System.out.println("\n\n");
+        System.out.printf("%20s", "Subject");
+        System.out.printf("%6s", "1Q");
+        System.out.printf("%7s", "2Q");
+        System.out.printf("%7s", "3Q");
+        System.out.printf("%7s", "4Q");
+        System.out.printf("%10s", "Average");
+        System.out.printf("%14s", "Letter Grade");
+        System.out.println();
+        System.out.printf("%44s", "-------------------------------------------------------------------------");
+        System.out.println();
         for (int i = 0; i < courses.size(); i++) {
             String courseTitle = courses.get(i);
             float[] courseScores = mappedScores(courseTitle);
@@ -157,10 +213,15 @@ class ReportCard {
             for (float f : courseScores) {
                 System.out.printf(" %6.2f", f);
             }
-            System.out.print("\t" + courseAverage(courseScores));
+            System.out.printf("%6d", courseAverage(courseScores));
+            System.out.printf("%10s", letterGrade(courseTitle));
             System.out.println();
         }
-
+        System.out.printf("%44s", "-------------------------------------------------------------------------");
+        System.out.println("\n");
+        System.out.print("GPA: " + this.gradePointAverage());
+        System.out.println("\n\n\n\n\n\n");
+        System.out.println(ReportCard.ACADEMIC_SCALE);
     }
 
     /**
