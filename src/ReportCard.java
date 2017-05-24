@@ -2,18 +2,28 @@ import java.util.ArrayList;
 
 class ReportCard {
 
-    /* Class level relevant constants */
+    /**
+     * Class level relevant constants
+     */
+
+    /* School Name */
     static final String SCHOOL_NAME = "TRUE KNOWLEDGE QUEST MIDDLE SCHOOL";
+    /* Current Academic Year */
     static final String ACADEMIC_YEAR = "2016 - 2017";
+    /* Academic scale per which the student are graded */
     static final String ACADEMIC_SCALE = "A = 90 - 100 \nB = 80 - 89 \nC = 70 - 79 \nD = 65 - 69 \nF = Below 65";
-    /* Store the student's name */
+    /* Student's name */
     private String name;
-    /* Store the student grade */
+    /* Student grade */
     private String grade;
-    /* Store the student's enrolled courses as an ArrayList */
+    /* Student's enrolled courses as an ArrayList */
     private ArrayList<String> courses;
-    /* Store the scores scored on each subject in an ordered list where the order corresponds to the courses list */
+    /* Scores scored on each subject in an ordered list where the order corresponds to the courses list */
     private ArrayList<ArrayList<Float>> scores;
+    /* Days absent information of student */
+    private int[] daysAbsent;
+    /* Times tardy information of student */
+    private int[] timesTardy;
 
     /**
      * Create a ReportCard object
@@ -22,7 +32,8 @@ class ReportCard {
      * @param studentGrade   a String for the student's grade
      * @param studentCourses a String list that contains student enrolled courses
      */
-    ReportCard(String studentName, String studentGrade, ArrayList<String> studentCourses, ArrayList<ArrayList<Float>> studentCourseScores) {
+    ReportCard(String studentName, String studentGrade, ArrayList<String> studentCourses, ArrayList<ArrayList<Float>> studentCourseScores,
+               int[] studentAbsentDays, int[] studentTimesTardy) {
 
         /* Check for valid name entry. Ideally, this should be handled at the student class level */
         if (containsOnlyAlphabets(studentName)) {
@@ -48,46 +59,12 @@ class ReportCard {
                 this.scores = studentCourseScores;
             }
         }
-    }
 
-    public static void main(String[] args) {
+        // Store days absent information of student
+        this.daysAbsent = studentAbsentDays;
 
-        ArrayList<String> studentCourses = new ArrayList<>();
-        studentCourses.add("Science");
-        studentCourses.add("Mathematics");
-        studentCourses.add("Computer Science");
-
-        ArrayList<ArrayList<Float>> studentCourseScores = new ArrayList<ArrayList<Float>>();
-
-        ArrayList<Float> science = new ArrayList<Float>();
-        science.add(95.75f);
-        science.add(100f);
-        science.add(98.85f);
-        science.add(99.5f);
-        studentCourseScores.add(science);
-
-        ArrayList<Float> math = new ArrayList<Float>();
-        math.add(100f);
-        math.add(98f);
-        math.add(100f);
-        math.add(100f);
-        studentCourseScores.add(math);
-
-        ArrayList<Float> cs = new ArrayList<Float>();
-        cs.add(100f);
-        cs.add(100f);
-        cs.add(100f);
-        cs.add(100f);
-        studentCourseScores.add(cs);
-
-        ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores);
-        System.out.println();
-        System.out.println();
-
-        test.display();
-        System.out.println();
-
-
+        // Store times tardy information of student
+        this.timesTardy = studentTimesTardy;
     }
 
     /**
@@ -151,6 +128,12 @@ class ReportCard {
         return Math.round(sum / courseScores.length);
     }
 
+    /**
+     * Get the letter grade for an individual course per student's quarterly performance
+     *
+     * @param courseTitle the title of the course
+     * @return letter grade is returned per the academic scale
+     */
     String letterGrade(String courseTitle) {
         float[] courseScore = mappedScores(courseTitle);
         int courseAverage = courseAverage(courseScore);
@@ -167,6 +150,12 @@ class ReportCard {
         }
     }
 
+    /**
+     * Compute Grade Point Average where each grade has different weights
+     * A = 4; B = 3; C = 2; D = 1: F = 0
+     *
+     * @return a floating point decimal as GPA is returned
+     */
     float gradePointAverage() {
         int sum = 0;
         for (String s : courses) {
@@ -183,6 +172,20 @@ class ReportCard {
             }
         }
         return sum / (float) courses.size();
+    }
+
+    /**
+     * Get the decision on whether the student is promoted or retained
+     *
+     * @param gpa The GPA of student is the sole criterion for deciding whether the student is promoted or not
+     * @return "Promoted" when the GPA of the student is greater than 1 and "Retained" if not
+     */
+    String promotionDecision(float gpa) {
+        if (gpa > 1) {
+            return "Promoted";
+        } else {
+            return "Retained";
+        }
     }
 
     /**
@@ -219,7 +222,28 @@ class ReportCard {
         }
         System.out.printf("%44s", "-------------------------------------------------------------------------");
         System.out.println("\n");
-        System.out.print("GPA: " + this.gradePointAverage());
+
+
+        System.out.println("ATTENDANCE");
+        System.out.print("Days Absent:");
+        for (int i : daysAbsent) {
+            System.out.printf("\t%02d", i);
+        }
+        System.out.println();
+        System.out.print("Times Tardy: ");
+        for (int i : timesTardy) {
+            System.out.printf("\t%02d", i);
+        }
+
+        // Calculate GPA
+        System.out.println("\n\n");
+        float gpa = this.gradePointAverage();
+        System.out.println("GPA: " + this.gradePointAverage() + "\n");
+
+        // Compute promotion decision
+        System.out.print("Promoted or Retained: " + promotionDecision(gpa).toUpperCase());
+
+        // Display academic scale for reference
         System.out.println("\n\n\n\n\n\n");
         System.out.println(ReportCard.ACADEMIC_SCALE);
     }
@@ -255,5 +279,40 @@ class ReportCard {
             result = false;
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+
+        ArrayList<String> studentCourses = new ArrayList<>();
+        studentCourses.add("Science");
+        studentCourses.add("Mathematics");
+        studentCourses.add("Computer Science");
+
+        ArrayList<ArrayList<Float>> studentCourseScores = new ArrayList<ArrayList<Float>>();
+
+        ArrayList<Float> science = new ArrayList<Float>();
+        science.add(95.75f);
+        science.add(100f);
+        science.add(98.85f);
+        science.add(99.5f);
+        studentCourseScores.add(science);
+
+        ArrayList<Float> math = new ArrayList<Float>();
+        math.add(100f);
+        math.add(98f);
+        math.add(100f);
+        math.add(100f);
+        studentCourseScores.add(math);
+
+        ArrayList<Float> cs = new ArrayList<Float>();
+        cs.add(100f);
+        cs.add(100f);
+        cs.add(100f);
+        cs.add(100f);
+        studentCourseScores.add(cs);
+
+        ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores, new int[]{0, 0, 0, 0}, new int[]{0, 1, 0, 0});
+        System.out.println();
+        test.display();
     }
 }
