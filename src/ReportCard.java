@@ -1,3 +1,14 @@
+/**
+ * The class assumes the existence of Student and Teacher class. The constructor takes in arguments from the student
+ * and/or teacher class. Report card is a final document that officially communicates the student's performance over the
+ * course of the past academic year. So, the class is built with the finality and there are no setters for changing the
+ * arguments initialized via the class' constructor (only one provided). Consequently, any modifications to the student's
+ * scores or adjustments are handled at the student class object level. Further, the class also overrides the object's
+ * toString() method and provides a better one to present the contents of the class in an appropriately formatted human-
+ * readable string. Alternatively, the class also has a display method that presents the contents of the class per the
+ * standard real-world report card format.
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -255,7 +266,9 @@ class ReportCard {
         String promotedOrRetained = "Promoted or Retained: " + this.promotionDecision(this.gradePointAverage()).toUpperCase();
 
         // final string
-        String readable = header + studentDetails + subjectAndScores + "\n\n" + averageAndLetter + "\n\n" + attendance + "\n\n" + gpa + "\n\n" + promotedOrRetained;
+        String readable = header + studentDetails + subjectAndScores + "\n\n" + averageAndLetter + "\n\n" + attendance +
+                "\n\n" + gpa + "\n\n" + promotedOrRetained + "\n\n\n" + "ACADEMIC SCALE\n" + "--------------\n"
+                + ReportCard.ACADEMIC_SCALE;
 
         return readable;
     }
@@ -387,6 +400,10 @@ class ReportCard {
 
         ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores, new int[]{0, 0, 0, 0}, new int[]{0, 1, 0, 0});
         System.out.println();
+        // Present contents via toString()
         System.out.println(test);
+        // Present report card styled format
+        System.out.println("\n\n");
+        test.display();
     }
 }
