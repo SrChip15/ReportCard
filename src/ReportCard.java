@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class ReportCard {
 
@@ -26,6 +27,48 @@ class ReportCard {
     private int[] timesTardy;
 
     /**
+     * Get the student's name
+     *
+     * @return a String for the name
+     */
+    String getName() {
+        return name;
+    }
+
+    /**
+     * Get the student's grade
+     *
+     * @return a String for the grade
+     */
+    String getGrade() {
+        return grade;
+    }
+
+    /**
+     * Display the list of enrolled courses in line-separated format
+     */
+    public ArrayList<String> getCourses() {
+        return courses;
+    }
+
+    /**
+     * Get the
+     *
+     * @return
+     */
+    public ArrayList<ArrayList<Float>> getScores() {
+        return scores;
+    }
+
+    public String getDaysAbsent() {
+            return Arrays.toString(daysAbsent);
+    }
+
+    public String getTimesTardy() {
+        return Arrays.toString(timesTardy);
+    }
+
+    /**
      * Create a ReportCard object
      *
      * @param studentName    a String for the student's name
@@ -38,6 +81,7 @@ class ReportCard {
         /* Check for valid name entry. Ideally, this should be handled at the student class level */
         if (containsOnlyAlphabets(studentName)) {
             this.name = studentName;
+
         } else {
             System.out.println("Illegal value for student's name");
         }
@@ -65,34 +109,6 @@ class ReportCard {
 
         // Store times tardy information of student
         this.timesTardy = studentTimesTardy;
-    }
-
-    /**
-     * Get the student's name
-     *
-     * @return a String for the name
-     */
-    String getName() {
-        return name;
-    }
-
-    /**
-     * Get the student's grade
-     *
-     * @return a String for the grade
-     */
-    String getGrade() {
-        return grade;
-    }
-
-    /**
-     * Display the list of enrolled courses in line-separated format
-     */
-    void getCourses() {
-        System.out.println();
-        for (String s : courses) {
-            System.out.println(s);
-        }
     }
 
     /**
@@ -189,7 +205,64 @@ class ReportCard {
     }
 
     /**
-     * Displays the Report Card for a student
+     * Returns the contents of the class in a human-readable string
+     *
+     * @return a formatted String with all the contents of the class
+     */
+    @Override
+    public String toString() {
+        String header = ReportCard.SCHOOL_NAME + "\n" + ReportCard.ACADEMIC_YEAR + "\n";
+        String studentDetails = "Name: " + this.getName() + "\nGrade: " + this.getGrade() + "\n\n";
+
+        // Get enrolled courses and scores side-by-side
+        String subjectAndScores = "SCORES:\n-------\n";
+        // Get individual course's average and letter grade
+        String averageAndLetter = "AVERAGE AND LETTER GRADE:\n-------------------------\n";
+        for (int i = 0; i < courses.size(); i++) {
+            String courseTitle = courses.get(i);
+            subjectAndScores += courseTitle + ": ";
+            float[] courseScores = mappedScores(courseTitle);
+            for (float f : courseScores) {
+                subjectAndScores += f + " ";
+            }
+            subjectAndScores += "\n";
+            averageAndLetter += courseTitle + ": " + String.valueOf(courseAverage(courseScores)) + " " + letterGrade(courseTitle) + "\n";
+        }
+        // Get attendance information
+        // Get number of days absent
+        String attendance = "ATTENDANCE:\n-----------\nDays Absent: ";
+        for (int i : daysAbsent) {
+            if (i > 9) {
+                attendance += i + " ";
+            } else {
+                attendance += "0" + i + " ";
+            }
+        }
+        // Get number of times tardy
+        attendance += "\nTimes Tardy: ";
+        for (int i : timesTardy) {
+            if (i > 9) {
+                attendance += i + " ";
+            } else {
+                attendance += "0" + i + " ";
+            }
+        }
+
+        // Get GPA
+        String gpa = "GPA: " + this.gradePointAverage();
+
+        // Get promotion decision
+        String promotedOrRetained = "Promoted or Retained: " + this.promotionDecision(this.gradePointAverage()).toUpperCase();
+
+        // final string
+        String readable = header + studentDetails + subjectAndScores + "\n\n" + averageAndLetter + "\n\n" + attendance + "\n\n" + gpa + "\n\n" + promotedOrRetained;
+
+        return readable;
+    }
+
+    /**
+     * Official display for the Report Card class for a student presented in a real-world report card format
+     * The method prints the report card styled display in the standard console
      */
     void display() {
         System.out.printf("%55s", ReportCard.SCHOOL_NAME);
@@ -224,6 +297,7 @@ class ReportCard {
         System.out.println("\n");
 
 
+        // Displays Attendance information of the student
         System.out.println("ATTENDANCE");
         System.out.print("Days Absent:");
         for (int i : daysAbsent) {
@@ -313,6 +387,6 @@ class ReportCard {
 
         ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores, new int[]{0, 0, 0, 0}, new int[]{0, 1, 0, 0});
         System.out.println();
-        test.display();
+        System.out.println(test);
     }
 }
