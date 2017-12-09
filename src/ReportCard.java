@@ -12,6 +12,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 class ReportCard {
 
     /**
@@ -19,11 +20,11 @@ class ReportCard {
      */
 
     /* School Name */
-    static final String SCHOOL_NAME = "TRUE KNOWLEDGE QUEST MIDDLE SCHOOL";
+    private static final String SCHOOL_NAME = "TRUE KNOWLEDGE QUEST MIDDLE SCHOOL";
     /* Current Academic Year */
-    static final String ACADEMIC_YEAR = "2016 - 2017";
+    private static final String ACADEMIC_YEAR = "2016 - 2017";
     /* Academic scale per which the student are graded */
-    static final String ACADEMIC_SCALE = "A = 90 - 100 \nB = 80 - 89 \nC = 70 - 79 \nD = 65 - 69 \nF = Below 65";
+    private static final String ACADEMIC_SCALE = "A = 90 - 100 \nB = 80 - 89 \nC = 70 - 79 \nD = 65 - 69 \nF = Below 65";
     /* Student's name */
     private String name;
     /* Student grade */
@@ -42,7 +43,7 @@ class ReportCard {
      *
      * @return a String for the name
      */
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -51,7 +52,7 @@ class ReportCard {
      *
      * @return a String for the grade
      */
-    String getGrade() {
+    public String getGrade() {
         return grade;
     }
 
@@ -63,16 +64,16 @@ class ReportCard {
     }
 
     /**
-     * Get the
+     * Get the scores of a student
      *
-     * @return
+     * @return a list of list of scores
      */
     public ArrayList<ArrayList<Float>> getScores() {
         return scores;
     }
 
     public String getDaysAbsent() {
-            return Arrays.toString(daysAbsent);
+        return Arrays.toString(daysAbsent);
     }
 
     public String getTimesTardy() {
@@ -186,16 +187,22 @@ class ReportCard {
     float gradePointAverage() {
         int sum = 0;
         for (String s : courses) {
-            if (letterGrade(s).equals("A")) {
-                sum += 4;
-            } else if (letterGrade(s).equals("B")) {
-                sum += 3;
-            } else if (letterGrade(s).equals("C")) {
-                sum += 2;
-            } else if (letterGrade(s).equals("D")) {
-                sum += 1;
-            } else {
-                // No points for letter grade E
+            switch (letterGrade(s)) {
+                case "A":
+                    sum += 4;
+                    break;
+                case "B":
+                    sum += 3;
+                    break;
+                case "C":
+                    sum += 2;
+                    break;
+                case "D":
+                    sum += 1;
+                    break;
+                default:
+                    // No points for letter grade E
+                    break;
             }
         }
         return sum / (float) courses.size();
@@ -220,42 +227,47 @@ class ReportCard {
      *
      * @return a formatted String with all the contents of the class
      */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     @Override
     public String toString() {
         String header = ReportCard.SCHOOL_NAME + "\n" + ReportCard.ACADEMIC_YEAR + "\n";
         String studentDetails = "Name: " + this.getName() + "\nGrade: " + this.getGrade() + "\n\n";
 
         // Get enrolled courses and scores side-by-side
-        String subjectAndScores = "SCORES:\n-------\n";
+        StringBuilder subjectAndScores = new StringBuilder("SCORES:\n-------\n");
         // Get individual course's average and letter grade
-        String averageAndLetter = "AVERAGE AND LETTER GRADE:\n-------------------------\n";
-        for (int i = 0; i < courses.size(); i++) {
-            String courseTitle = courses.get(i);
-            subjectAndScores += courseTitle + ": ";
+        StringBuilder averageAndLetter = new StringBuilder("AVERAGE AND LETTER GRADE:\n-------------------------\n");
+        for (String courseTitle : courses) {
+            subjectAndScores.append(courseTitle).append(": ");
             float[] courseScores = mappedScores(courseTitle);
             for (float f : courseScores) {
-                subjectAndScores += f + " ";
+                subjectAndScores.append(f).append(" ");
             }
-            subjectAndScores += "\n";
-            averageAndLetter += courseTitle + ": " + String.valueOf(courseAverage(courseScores)) + " " + letterGrade(courseTitle) + "\n";
+            subjectAndScores.append("\n");
+            averageAndLetter.append(courseTitle)
+                    .append(": ")
+                    .append(String.valueOf(courseAverage(courseScores)))
+                    .append(" ")
+                    .append(letterGrade(courseTitle))
+                    .append("\n");
         }
         // Get attendance information
         // Get number of days absent
-        String attendance = "ATTENDANCE:\n-----------\nDays Absent: ";
+        StringBuilder attendance = new StringBuilder("ATTENDANCE:\n-----------\nDays Absent: ");
         for (int i : daysAbsent) {
             if (i > 9) {
-                attendance += i + " ";
+                attendance.append(i).append(" ");
             } else {
-                attendance += "0" + i + " ";
+                attendance.append("0").append(i).append(" ");
             }
         }
         // Get number of times tardy
-        attendance += "\nTimes Tardy: ";
+        attendance.append("\nTimes Tardy: ");
         for (int i : timesTardy) {
             if (i > 9) {
-                attendance += i + " ";
+                attendance.append(i).append(" ");
             } else {
-                attendance += "0" + i + " ";
+                attendance.append("0").append(i).append(" ");
             }
         }
 
@@ -295,8 +307,7 @@ class ReportCard {
         System.out.println();
         System.out.printf("%44s", "-------------------------------------------------------------------------");
         System.out.println();
-        for (int i = 0; i < courses.size(); i++) {
-            String courseTitle = courses.get(i);
+        for (String courseTitle : courses) {
             float[] courseScores = mappedScores(courseTitle);
             System.out.printf("%20s:", courseTitle);
             for (float f : courseScores) {
@@ -375,30 +386,37 @@ class ReportCard {
         studentCourses.add("Mathematics");
         studentCourses.add("Computer Science");
 
-        ArrayList<ArrayList<Float>> studentCourseScores = new ArrayList<ArrayList<Float>>();
+        ArrayList<ArrayList<Float>> studentCourseScores = new ArrayList<>();
 
-        ArrayList<Float> science = new ArrayList<Float>();
+        ArrayList<Float> science = new ArrayList<>();
         science.add(95.75f);
         science.add(100f);
         science.add(98.85f);
         science.add(99.5f);
         studentCourseScores.add(science);
 
-        ArrayList<Float> math = new ArrayList<Float>();
+        ArrayList<Float> math = new ArrayList<>();
         math.add(100f);
         math.add(98f);
         math.add(100f);
         math.add(100f);
         studentCourseScores.add(math);
 
-        ArrayList<Float> cs = new ArrayList<Float>();
+        ArrayList<Float> cs = new ArrayList<>();
         cs.add(100f);
         cs.add(100f);
         cs.add(100f);
         cs.add(100f);
         studentCourseScores.add(cs);
 
-        ReportCard test = new ReportCard("Lee", "7", studentCourses, studentCourseScores, new int[]{0, 0, 0, 0}, new int[]{0, 1, 0, 0});
+        ReportCard test = new ReportCard(
+                "Robert",
+                "7",
+                studentCourses,
+                studentCourseScores,
+                new int[]{0, 0, 0, 0},
+                new int[]{0, 1, 0, 0}
+                );
         System.out.println();
         // Present contents via toString()
         System.out.println(test);
